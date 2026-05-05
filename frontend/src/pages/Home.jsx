@@ -9,9 +9,17 @@ const Home = () => {
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     cargarProductos();
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const cargarProductos = async () => {
@@ -53,22 +61,24 @@ const Home = () => {
   if (loading) return <Spinner />;
 
   return (
-    <div style={styles.page}>
-      <section style={styles.hero}>
+    <div style={{ ...styles.page, padding: isMobile ? '18px' : '35px' }}>
+      <section style={{ ...styles.hero, flexDirection: isMobile ? 'column' : 'row', textAlign: isMobile ? 'center' : 'left' }}>
         <div>
           <p style={styles.badge}>Panel de Inventario</p>
-          <h1 style={styles.title}>Gestión profesional de productos</h1>
+          <h1 style={{ ...styles.title, fontSize: isMobile ? '26px' : '34px' }}>
+            Gestión profesional de productos
+          </h1>
           <p style={styles.subtitle}>
             Administra tus productos, controla el stock y mantén tu inventario actualizado.
           </p>
         </div>
 
-        <Link to="/nuevo" style={styles.primaryButton}>
+        <Link to="/nuevo" style={{ ...styles.primaryButton, width: isMobile ? '100%' : 'auto', textAlign: 'center' }}>
           + Nuevo Producto
         </Link>
       </section>
 
-      <section style={styles.statsGrid}>
+      <section style={{ ...styles.statsGrid, gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)' }}>
         <div style={styles.statCard}>
           <span style={styles.statLabel}>Productos registrados</span>
           <strong style={styles.statNumber}>{totalProductos}</strong>
@@ -86,13 +96,13 @@ const Home = () => {
       </section>
 
       <section style={styles.panel}>
-        <div style={styles.panelHeader}>
+        <div style={{ ...styles.panelHeader, flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center' }}>
           <div>
             <h2 style={styles.panelTitle}>Lista de productos</h2>
             <p style={styles.panelText}>Busca, edita o elimina productos registrados.</p>
           </div>
 
-          <div style={styles.searchBox}>
+          <div style={{ ...styles.searchBox, width: isMobile ? '100%' : '330px' }}>
             <span style={styles.searchIcon}>🔎</span>
             <input
               type="text"
@@ -108,7 +118,7 @@ const Home = () => {
           <div style={styles.errorBox}>{error}</div>
         ) : (
           <div style={styles.tableWrapper}>
-            <table style={styles.table}>
+            <table style={{ ...styles.table, minWidth: isMobile ? '850px' : '100%' }}>
               <thead>
                 <tr>
                   <th style={styles.th}>Producto</th>
@@ -123,9 +133,7 @@ const Home = () => {
               <tbody>
                 {productosFiltrados.length === 0 ? (
                   <tr>
-                    <td colSpan="6" style={styles.empty}>
-                      No hay productos disponibles.
-                    </td>
+                    <td colSpan="6" style={styles.empty}>No hay productos disponibles.</td>
                   </tr>
                 ) : (
                   productosFiltrados.map((producto) => {
@@ -151,7 +159,6 @@ const Home = () => {
                         </td>
 
                         <td style={styles.td}>S/ {Number(producto.precio).toFixed(2)}</td>
-
                         <td style={styles.td}>{producto.stock}</td>
 
                         <td style={styles.td}>
@@ -168,14 +175,8 @@ const Home = () => {
 
                         <td style={styles.td}>
                           <div style={styles.actions}>
-                            <Link to={`/editar/${id}`} style={styles.editButton}>
-                              Editar
-                            </Link>
-
-                            <button
-                              onClick={() => handleEliminar(id)}
-                              style={styles.deleteButton}
-                            >
+                            <Link to={`/editar/${id}`} style={styles.editButton}>Editar</Link>
+                            <button onClick={() => handleEliminar(id)} style={styles.deleteButton}>
                               Borrar
                             </button>
                           </div>
@@ -196,9 +197,9 @@ const Home = () => {
 const styles = {
   page: {
     minHeight: '100vh',
-    padding: '35px',
     background: 'linear-gradient(135deg, #eef2ff 0%, #f8fafc 45%, #e0f2fe 100%)',
     fontFamily: 'Arial, sans-serif',
+    boxSizing: 'border-box',
   },
   hero: {
     background: 'linear-gradient(135deg, #111827, #1e3a8a)',
@@ -208,6 +209,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: '25px',
     boxShadow: '0 20px 45px rgba(15, 23, 42, 0.25)',
     marginBottom: '25px',
   },
@@ -220,7 +222,6 @@ const styles = {
     marginBottom: '12px',
   },
   title: {
-    fontSize: '34px',
     margin: '0 0 10px 0',
   },
   subtitle: {
@@ -235,10 +236,10 @@ const styles = {
     borderRadius: '14px',
     fontWeight: 'bold',
     textDecoration: 'none',
+    boxSizing: 'border-box',
   },
   statsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
     gap: '18px',
     marginBottom: '25px',
   },
@@ -270,7 +271,6 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     gap: '20px',
-    alignItems: 'center',
     marginBottom: '20px',
   },
   panelTitle: {
@@ -289,7 +289,7 @@ const styles = {
     border: '1px solid #dbeafe',
     borderRadius: '14px',
     padding: '0 14px',
-    width: '330px',
+    boxSizing: 'border-box',
   },
   searchIcon: {
     marginRight: '8px',
@@ -304,6 +304,7 @@ const styles = {
   },
   tableWrapper: {
     overflowX: 'auto',
+    width: '100%',
   },
   table: {
     width: '100%',
@@ -340,6 +341,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     fontWeight: 'bold',
+    flexShrink: 0,
   },
   productName: {
     color: '#111827',
