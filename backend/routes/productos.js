@@ -1,5 +1,4 @@
 const express = require('express');
-const { Op } = require('sequelize');
 const Yup = require('yup');
 const Product = require('../models/Product');
 
@@ -22,6 +21,21 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET: Obtener un producto por ID
+router.get('/:id', async (req, res) => {
+  try {
+    const producto = await Product.findByPk(req.params.id);
+
+    if (!producto) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    res.status(200).json(producto);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener producto' });
+  }
+});
+
 // POST: Crear nuevo
 router.post('/', async (req, res) => {
   try {
@@ -29,7 +43,10 @@ router.post('/', async (req, res) => {
     const nuevoProducto = await Product.create(req.body);
     res.status(201).json(nuevoProducto);
   } catch (error) {
-    if (error.name === 'ValidationError') return res.status(400).json({ errores: error.errors });
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ errores: error.errors });
+    }
+
     res.status(500).json({ error: 'Error al crear' });
   }
 });
@@ -38,13 +55,21 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     await productSchema.validate(req.body, { abortEarly: false });
+
     const producto = await Product.findByPk(req.params.id);
-    if (!producto) return res.status(404).json({ error: 'No encontrado' });
+
+    if (!producto) {
+      return res.status(404).json({ error: 'No encontrado' });
+    }
 
     await producto.update(req.body);
+
     res.status(200).json(producto);
   } catch (error) {
-    if (error.name === 'ValidationError') return res.status(400).json({ errores: error.errors });
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ errores: error.errors });
+    }
+
     res.status(500).json({ error: 'Error al actualizar' });
   }
 });
@@ -53,9 +78,13 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const producto = await Product.findByPk(req.params.id);
-    if (!producto) return res.status(404).json({ error: 'No encontrado' });
+
+    if (!producto) {
+      return res.status(404).json({ error: 'No encontrado' });
+    }
 
     await producto.destroy();
+
     res.status(200).json({ mensaje: 'Eliminado' });
   } catch (error) {
     res.status(500).json({ error: 'Error al eliminar' });
