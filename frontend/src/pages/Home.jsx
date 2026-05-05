@@ -62,7 +62,13 @@ const Home = () => {
 
   return (
     <div style={{ ...styles.page, padding: isMobile ? '18px' : '35px' }}>
-      <section style={{ ...styles.hero, flexDirection: isMobile ? 'column' : 'row', textAlign: isMobile ? 'center' : 'left' }}>
+      <section
+        style={{
+          ...styles.hero,
+          flexDirection: isMobile ? 'column' : 'row',
+          textAlign: isMobile ? 'center' : 'left',
+        }}
+      >
         <div>
           <p style={styles.badge}>Panel de Inventario</p>
           <h1 style={{ ...styles.title, fontSize: isMobile ? '26px' : '34px' }}>
@@ -73,12 +79,24 @@ const Home = () => {
           </p>
         </div>
 
-        <Link to="/nuevo" style={{ ...styles.primaryButton, width: isMobile ? '100%' : 'auto', textAlign: 'center' }}>
+        <Link
+          to="/nuevo"
+          style={{
+            ...styles.primaryButton,
+            width: isMobile ? '100%' : 'auto',
+            textAlign: 'center',
+          }}
+        >
           + Nuevo Producto
         </Link>
       </section>
 
-      <section style={{ ...styles.statsGrid, gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)' }}>
+      <section
+        style={{
+          ...styles.statsGrid,
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+        }}
+      >
         <div style={styles.statCard}>
           <span style={styles.statLabel}>Productos registrados</span>
           <strong style={styles.statNumber}>{totalProductos}</strong>
@@ -96,7 +114,13 @@ const Home = () => {
       </section>
 
       <section style={styles.panel}>
-        <div style={{ ...styles.panelHeader, flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center' }}>
+        <div
+          style={{
+            ...styles.panelHeader,
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: isMobile ? 'stretch' : 'center',
+          }}
+        >
           <div>
             <h2 style={styles.panelTitle}>Lista de productos</h2>
             <p style={styles.panelText}>Busca, edita o elimina productos registrados.</p>
@@ -133,11 +157,13 @@ const Home = () => {
               <tbody>
                 {productosFiltrados.length === 0 ? (
                   <tr>
-                    <td colSpan="6" style={styles.empty}>No hay productos disponibles.</td>
+                    <td colSpan="6" style={styles.empty}>
+                      No hay productos disponibles.
+                    </td>
                   </tr>
                 ) : (
                   productosFiltrados.map((producto) => {
-                    const id = producto._id || producto.id;
+                    const id = producto.id;
                     const stock = Number(producto.stock);
 
                     return (
@@ -175,8 +201,14 @@ const Home = () => {
 
                         <td style={styles.td}>
                           <div style={styles.actions}>
-                            <Link to={`/editar/${id}`} style={styles.editButton}>Editar</Link>
-                            <button onClick={() => handleEliminar(id)} style={styles.deleteButton}>
+                            <Link to={`/editar/${id}`} style={styles.editButton}>
+                              Editar
+                            </Link>
+
+                            <button
+                              onClick={() => handleEliminar(id)}
+                              style={styles.deleteButton}
+                            >
                               Borrar
                             </button>
                           </div>
